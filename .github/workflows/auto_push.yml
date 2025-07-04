@@ -1,0 +1,28 @@
+name: Auto Push Docker Images
+
+on:
+  push:
+    paths:
+      - 'docs/*.yaml'
+      - 'docs_readme/*.md'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run DockerHub Auto Push Script
+        run: python dockerhub_auto_push.py
