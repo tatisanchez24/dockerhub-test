@@ -53,7 +53,7 @@ for filename in os.listdir("docs"):
 
         # Preparar archivos para la imagen
         yaml_path = os.path.join("docs", filename)
-        readme_path = os.path.join("docs_readme", f"{name}.md")
+        readme_path = os.path.join("docs_readme", f"{os.path.splitext(filename)[0]}.md")
         dockerfile_path = "Dockerfile.template"
 
         # Leer la versión desde el archivo YAML
