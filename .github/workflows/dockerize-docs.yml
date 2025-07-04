@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'docs/*.yaml'
+      - 'docs_readme/*.md'
 
 jobs:
   build-and-push:
