@@ -40,7 +40,7 @@ for filename in os.listdir("docs"):
             create_response = requests.post(
                 f"{DOCKER_API}/repositories/",
                 headers=headers,
-                json={"name": name, "is_private": False}
+                json={"name": name, "namespace": docker_username, "is_private": False}
             )
             if create_response.status_code != 201:
                 print(f"❌ Error al crear el repositorio {repo_name}")
