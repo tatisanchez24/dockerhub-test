@@ -1,6 +1,7 @@
 import os
 import subprocess
 import requests
+import yaml  # Asegúrate de tener PyYAML instalado: pip install pyyaml
 
 # Usa variables de entorno para las credenciales de Docker Hub
 docker_username = os.getenv("DOCKER_USERNAME")
@@ -55,6 +56,11 @@ for filename in os.listdir("docs"):
         readme_path = os.path.join("docs_readme", f"{name}.md")
         dockerfile_path = "Dockerfile.template"
 
+        # Leer la versión desde el archivo YAML
+        with open(yaml_path, "r") as f:
+            yaml_content = yaml.safe_load(f)
+            version = yaml_content.get("version", "latest")
+
         with open("build_context/documentation.yaml", "w") as f:
             f.write(open(yaml_path).read())
 
@@ -68,11 +74,28 @@ for filename in os.listdir("docs"):
         with open("build_context/Dockerfile", "w") as f:
             f.write(open(dockerfile_path).read())
 
-        # Construir y subir la imagen
-        image_tag = f"{repo_name}:latest"
+        # Construir y subir la imagen con la versión como tag
+        image_tag = f"{repo_name}:{version}"
         subprocess.run(["docker", "build", "-t", image_tag, "build_context"], check=True)
         subprocess.run(["docker", "login", "-u", docker_username, "--password-stdin"], input=docker_password.encode(), check=True)
         subprocess.run(["docker", "push", image_tag], check=True)
+
+        # Subir README al repositorio en Docker Hub
+        with open("build_context/README.md", "r") as f:
+            readme_content = f.read()
+
+        readme_update_response = requests.patch(
+            f"{DOCKER_API}/repositories/{docker_username}/{name}/",
+            headers=headers,
+            json={"full_description": readme_content}
+        )
+
+        if readme_update_response.status_code == 200:
+            print(f"📘 README actualizado correctamente para {repo_name}")
+        else:
+            print(f"⚠️ No se pudo actualizar el README para {repo_name}")
+            print(f"Status code: {readme_update_response.status_code}")
+            print(f"Respuesta: {readme_update_response.text}")
 
         # Limpiar contexto
         for f in os.listdir("build_context"):
