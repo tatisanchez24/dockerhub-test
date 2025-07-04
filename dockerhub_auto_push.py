@@ -74,11 +74,14 @@ for filename in os.listdir("docs"):
         with open("build_context/Dockerfile", "w") as f:
             f.write(open(dockerfile_path).read())
 
-        # Construir y subir la imagen con la versión como tag
-        image_tag = f"{repo_name}:{version}"
-        subprocess.run(["docker", "build", "-t", image_tag, "build_context"], check=True)
+        # Construir y subir la imagen con la versión y con el tag latest
+        version_tag = f"{repo_name}:{version}"
+        latest_tag = f"{repo_name}:latest"
+
+        subprocess.run(["docker", "build", "-t", version_tag, "-t", latest_tag, "build_context"], check=True)
         subprocess.run(["docker", "login", "-u", docker_username, "--password-stdin"], input=docker_password.encode(), check=True)
-        subprocess.run(["docker", "push", image_tag], check=True)
+        subprocess.run(["docker", "push", version_tag], check=True)
+        subprocess.run(["docker", "push", latest_tag], check=True)
 
         # Subir README al repositorio en Docker Hub
         with open("build_context/README.md", "r") as f:
