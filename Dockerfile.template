@@ -1,2 +1,8 @@
 FROM alpine
+
+# Create documentation directory
+RUN mkdir -p /docs
+
+# Copy YAML and README.md into the image
 COPY __YAML_FILE__ /docs/documentation.yaml
+COPY __README_FILE__ /docs/README.md
