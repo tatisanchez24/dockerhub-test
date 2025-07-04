@@ -43,7 +43,9 @@ for filename in os.listdir("docs"):
                 json={"name": name, "is_private": False}
             )
             if create_response.status_code != 201:
-                print(f"Error al crear el repositorio {repo_name}")
+                print(f"❌ Error al crear el repositorio {repo_name}")
+                print(f"Status code: {create_response.status_code}")
+                print(f"Respuesta de la API: {create_response.text}")
                 continue
         else:
             print(f"Repositorio {repo_name} ya existe.")
