@@ -1,0 +1,45 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: db-query-automation
+  description: Sistema para automatización de consultas SQL con validación, auditoría y recuperación de credenciales.
+spec:
+  owner: data-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: select-query-workflow
+  description: >
+    Workflow de StackStorm que ejecuta una consulta SELECT en base de datos, valida la consulta,
+    recupera credenciales desde st2kv, y registra auditoría de ejecución.
+spec:
+  type: workflow
+  lifecycle: production
+  owner: data-team
+  system: db-query-automation
+  providesApis:
+    - select-query-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: select-query-api
+  description: API de entrada para ejecutar consultas SQL validadas mediante StackStorm.
+spec:
+  type: internal
+  lifecycle: production
+  owner: data-team
+  system: db-query-automation
+  definition: |
+    input:
+      - environment: string
+      - database: string
+      - query: string
+    output:
+      - estado: string
+      - resultado: string
+    description: >
+      Ejecuta una consulta SQL validada en una base de datos específica, con recuperación de credenciales
+      desde st2kv y registro en tabla de auditoría si no existe.
