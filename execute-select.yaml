@@ -5,7 +5,7 @@ metadata:
   name: db-query-automation
   description: Sistema para automatización de consultas SQL con validación, auditoría y recuperación de credenciales.
 spec:
-  owner: data-team
+  owner: user:data-team
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Component
@@ -17,7 +17,7 @@ metadata:
 spec:
   type: workflow
   lifecycle: production
-  owner: data-team
+  owner: user:data-team
   system: db-query-automation
   providesApis:
     - select-query-api
@@ -30,7 +30,7 @@ metadata:
 spec:
   type: internal
   lifecycle: production
-  owner: data-team
+  owner: user:data-team
   system: db-query-automation
   definition: |
     input:
